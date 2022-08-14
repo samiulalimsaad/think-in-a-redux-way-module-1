@@ -2,37 +2,40 @@ const counterEl = document.querySelector("#counter");
 const incrementEl = document.querySelector("#increment");
 const decrementEl = document.querySelector("#decrement");
 
-const counter2El = document.querySelector("#counter2");
-const increment2El = document.querySelector("#increment2");
-const decrement2El = document.querySelector("#decrement2");
-
-let count = 0;
-let count2 = 0;
-
 const render = () => {
-    counterEl.innerText = count;
+    counterEl.innerText = store.getState().value;
 };
 
-const render2 = () => {
-    counter2El.innerText = count2;
+const initialState = {
+    value: 0,
 };
+
+const counterReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case "increment":
+            return {
+                ...state,
+                value: state.value + 1,
+            };
+        case "decrement":
+            return {
+                ...state,
+                value: state.value - 1,
+            };
+
+        default:
+            return state;
+    }
+};
+
+const store = Redux.createStore(counterReducer);
+
+store.subscribe(render);
 
 incrementEl.onclick = () => {
-    ++count;
-    render();
+    store.dispatch({ type: "increment" });
 };
 
 decrementEl.onclick = () => {
-    --count;
-    render();
-};
-
-increment2El.onclick = () => {
-    ++count2;
-    render2();
-};
-
-decrement2El.onclick = () => {
-    --count2;
-    render2();
+    store.dispatch({ type: "decrement" });
 };
