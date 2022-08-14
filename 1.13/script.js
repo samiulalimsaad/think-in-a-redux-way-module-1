@@ -1,17 +1,20 @@
 // nodes
-
 const counterContainerEl = document.querySelector("#counter-container");
 const addCounterContainerEl = document.querySelector("#add-counter-container");
 const resetCounterContainerEl = document.querySelector(
     "#reset-counter-container"
 );
-const count1ValueEl = document.querySelector("#count1-value");
-const increment1El = document.querySelector("#increment1");
-const decrement1El = document.querySelector("#decrement1");
 
+// event listener for add counter button
 addCounterContainerEl.onclick = () => {
+    // set random value for increment and decrement
+    const randomInc = Math.round(Math.random() * 15 + 1);
+    const randomDec = Math.round(Math.random() * 5 + 1);
+
     const elArray = counterContainerEl.children;
     const template = counterContainerEl.innerHTML;
+
+    // update
     counterContainerEl.innerHTML =
         template +
         `
@@ -26,42 +29,50 @@ addCounterContainerEl.onclick = () => {
                     <div class="flex space-x-3">
                         <button
                             id="increment${elArray.length + 1}"
-                            onclick="incrementValue(${elArray.length + 1})"
+                            onclick="incrementValue(${
+                                elArray.length + 1
+                            },${randomInc})"
                             class="bg-indigo-400 text-white px-3 py-2 rounded shadow"
-                            >
-                            Increment
-                            </button>
-                            <button
+                        >
+                            Increment (+${randomInc})
+                        </button>
+                        <button
                             id="decrement${elArray.length + 1}"
-                            onclick="decrementValue(${elArray.length + 1})"
+                            onclick="decrementValue(${
+                                elArray.length + 1
+                            },${randomDec})"
                             class="bg-red-400 text-white px-3 py-2 rounded shadow"
                         >
-                            Decrement
+                            Decrement (-${randomDec})
                         </button>
                     </div>
                 </div>
                 `;
 };
 
+// dispatcher functions
+const incrementValue = (id, value) => {
+    store.dispatch(incrementAction(id, value));
+};
+
+const decrementValue = (id, value) => {
+    store.dispatch(decrementAction(id, value));
+};
+
+// Reset all value to initialState
 resetCounterContainerEl.onclick = () => {
-    console.log("reset");
+    store.dispatch(resetAction());
 };
 
-// add event listeners to add child nodes
-const incrementValue = (id) => {
-    store.dispatch({
-        type: INCREMENT,
-        payload: { value: 5, name: "value" + id },
-    });
-    document.querySelector(`#count${id}-value`).innerText =
-        store.getState()["value" + id];
+// render function to update UI
+const render = () => {
+    const state = store.getState();
+    Object.keys(state).map(
+        (c, i) =>
+            (document.querySelector(`#count${i + 1}-value`).innerText =
+                state[c])
+    );
 };
 
-const decrementValue = (id) => {
-    store.dispatch({
-        type: DECREMENT,
-        payload: { value: 5, name: "value" + id },
-    });
-    document.querySelector(`#count${id}-value`).innerText =
-        store.getState()["value" + id];
-};
+// Redux subscriber to listen state change
+store.subscribe(render);
