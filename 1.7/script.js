@@ -1,10 +1,21 @@
 const counterEl = document.querySelector("#counter");
 const incrementEl = document.querySelector("#increment");
 const decrementEl = document.querySelector("#decrement");
+const increment5El = document.querySelector("#increment5");
+const decrement5El = document.querySelector("#decrement5");
 
 const render = () => {
     counterEl.innerText = store.getState().value;
 };
+
+// action identifier
+const INCREMENT = "increment";
+const DECREMENT = "decrement";
+
+// action creators
+const increment = (payload = 1) => ({ type: INCREMENT, payload });
+
+const decrement = (payload = 1) => ({ type: DECREMENT, payload });
 
 const initialState = {
     value: 0,
@@ -12,12 +23,12 @@ const initialState = {
 
 const counterReducer = (state = initialState, action) => {
     switch (action.type) {
-        case "increment":
+        case INCREMENT:
             return {
                 ...state,
                 value: state.value + action.payload,
             };
-        case "decrement":
+        case DECREMENT:
             return {
                 ...state,
                 value: state.value - action.payload,
@@ -33,9 +44,17 @@ const store = Redux.createStore(counterReducer);
 store.subscribe(render);
 
 incrementEl.onclick = () => {
-    store.dispatch({ type: "increment", payload: 5 });
+    store.dispatch(increment());
 };
 
 decrementEl.onclick = () => {
-    store.dispatch({ type: "decrement", payload: 2 });
+    store.dispatch(decrement());
+};
+
+increment5El.onclick = () => {
+    store.dispatch(increment(5));
+};
+
+decrement5El.onclick = () => {
+    store.dispatch(decrement(2));
 };
